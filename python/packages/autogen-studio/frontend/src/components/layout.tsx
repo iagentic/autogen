@@ -3,6 +3,7 @@ import { Dialog } from "@headlessui/react";
 import { X } from "lucide-react";
 import { appContext } from "../hooks/provider";
 import { useConfigStore } from "../hooks/store";
+import { IAProvider } from "../hooks/ia-context";
 import Footer from "./footer";
 import "antd/dist/reset.css";
 import SideBar from "./sidebar";
@@ -50,74 +51,76 @@ const Layout = ({
   }, [darkMode]);
 
   const layoutContent = (
-    <div className="min-h-screen flex">
-      {/* Mobile menu */}
-      <Dialog
-        as="div"
-        open={isMobileMenuOpen}
-        onClose={() => setIsMobileMenuOpen(false)}
-        className="relative z-50 md:hidden"
-      >
-        {/* Backdrop */}
-        <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
-
-        {/* Mobile Sidebar Container */}
-        <div className="fixed inset-0 flex">
-          <Dialog.Panel className="relative mr-16 flex w-full max-w-xs flex-1">
-            <div className="absolute right-0 top-0 flex w-16 justify-center pt-5">
-              <button
-                type="button"
-                className="text-secondary"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <span className="sr-only">Close sidebar</span>
-                <X className="h-6 w-6" aria-hidden="true" />
-              </button>
-            </div>
-            <SideBar link={link} meta={meta} isMobile={true} />
-          </Dialog.Panel>
-        </div>
-      </Dialog>
-
-      {/* Desktop sidebar */}
-      <div className="hidden md:flex md:flex-col md:fixed md:inset-y-0">
-        <SideBar link={link} meta={meta} isMobile={false} />
-      </div>
-
-      {/* Content area */}
-      <div
-        className={classNames(
-          "flex-1 flex flex-col min-h-screen",
-          "transition-all duration-300 ease-in-out",
-          "md:pl-16",
-          isExpanded ? "md:pl-72" : "md:pl-16"
-        )}
-      >
-        {showHeader && (
-          <ContentHeader
-            isMobileMenuOpen={isMobileMenuOpen}
-            onMobileMenuToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          />
-        )}
-
-        <ConfigProvider
-          theme={{
-            token: {
-              borderRadius: 4,
-              colorBgBase: darkMode === "dark" ? "#05080C" : "#ffffff",
-            },
-            algorithm:
-              darkMode === "dark"
-                ? theme.darkAlgorithm
-                : theme.defaultAlgorithm,
-          }}
+    <IAProvider>
+      <div className="min-h-screen flex">
+        {/* Mobile menu */}
+        <Dialog
+          as="div"
+          open={isMobileMenuOpen}
+          onClose={() => setIsMobileMenuOpen(false)}
+          className="relative z-50 md:hidden"
         >
-          <main className="flex-1 p-2 text-primary">{children}</main>
-        </ConfigProvider>
+          {/* Backdrop */}
+          <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
 
-        <Footer />
+          {/* Mobile Sidebar Container */}
+          <div className="fixed inset-0 flex">
+            <Dialog.Panel className="relative mr-16 flex w-full max-w-xs flex-1">
+              <div className="absolute right-0 top-0 flex w-16 justify-center pt-5">
+                <button
+                  type="button"
+                  className="text-secondary"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <span className="sr-only">Close sidebar</span>
+                  <X className="h-6 w-6" aria-hidden="true" />
+                </button>
+              </div>
+              <SideBar link={link} meta={meta} isMobile={true} />
+            </Dialog.Panel>
+          </div>
+        </Dialog>
+
+        {/* Desktop sidebar */}
+        <div className="hidden md:flex md:flex-col md:fixed md:inset-y-0">
+          <SideBar link={link} meta={meta} isMobile={false} />
+        </div>
+
+        {/* Content area */}
+        <div
+          className={classNames(
+            "flex-1 flex flex-col min-h-screen",
+            "transition-all duration-300 ease-in-out",
+            "md:pl-16",
+            isExpanded ? "md:pl-72" : "md:pl-16"
+          )}
+        >
+          {showHeader && (
+            <ContentHeader
+              isMobileMenuOpen={isMobileMenuOpen}
+              onMobileMenuToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            />
+          )}
+
+          <ConfigProvider
+            theme={{
+              token: {
+                borderRadius: 4,
+                colorBgBase: darkMode === "dark" ? "#05080C" : "#ffffff",
+              },
+              algorithm:
+                darkMode === "dark"
+                  ? theme.darkAlgorithm
+                  : theme.defaultAlgorithm,
+            }}
+          >
+            <main className="flex-1 p-2 text-primary">{children}</main>
+          </ConfigProvider>
+
+          <Footer />
+        </div>
       </div>
-    </div>
+    </IAProvider>
   );
 
   // If page is restricted and auth is not 'none', wrap with ProtectedRoute

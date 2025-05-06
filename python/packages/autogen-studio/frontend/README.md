@@ -1,4 +1,4 @@
-# AutoGen Studio frontend
+# iAgentic Studio frontend
 
 ## 🚀 Running UI in Dev Mode
 
